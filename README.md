@@ -45,13 +45,15 @@ Install a fresh raspbian Jessy on a 8 GB SD card. Start your pi and connect to i
 Using raspbian-config disable serial console and enable IC2, and reboot.
 
 Install the pip3 package manager to install the PyBuleZ library by typing
----
+
+---bash
 $ sudo apt-get install python3-pip
 $ sudo pip3 install PyBluez
 ---
 
 You need to make your bluetooth device discoverable for pairing it with your phone by typing
----
+
+---bash
 $ sudo hciconfig hci0 piscan
 $ sudo hciconfig hci0 name 'Device Name'
 ---
@@ -61,11 +63,13 @@ Then pair it with your phone. You won't need these to type these command again u
 OPTINAL: Configure the wifi, so that you can upgrade the code on the boat without having to put a RJ45 on your boat which is not very convenient...
 
 Edit the 'wpa_supplicant.conf' file by typing
----
+
+---bash
 $ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
 ---
 
 And add to the file:
+
 ---
 	network={
 		ssid="MY_SSID"
@@ -75,7 +79,8 @@ And add to the file:
 	}
 ---
 Then upgrade the wifi configuration by typing
----
+
+---bash
 $ sudo wpa_cli reconfigure
 ---
 
@@ -84,12 +89,14 @@ And then your are connected to your wifi, you can unplug the RJ45 and reconnect 
 # Installing this software
 
 Go to your home folder and clone this repository by typing
----
+
+---bash
 $ git clone https://github.com/cyrpaut/sailingbot.git
 ---
 
 Go in the folder and run the server manually to check its functionnality by typing
----
+
+---bash
 $ chmod +x main.py
 $ ./main.py
 ---
