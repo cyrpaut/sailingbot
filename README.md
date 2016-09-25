@@ -26,20 +26,21 @@ The hardware is composed of:
 
 # Wiring
 
-The raspberry Pi PWM HAT is soldered as indicated by adafruit 
-The tiller servo is plugged on the first PWM connector
-The sail line servo is connected on the 2nd PWM connector
-The GPS is connected on the USB plug
-The 3 color led is connected on pin 19-20-21 of the HAT breakout. Ground is connected to ground of this breakout.
-The BNO055 is soldered using adapters on the top of the breakout. 
-      - RST pin is connected on GPIO 19. 
-      - Serial pin are connected to the TX and RX pin of the breakout.
-      - GRND is connected to GRND
-      - 3.3V from the raspberry is connected to Vin and PS1 to enable serial interface on the BNO055
-Rotary encoder is connected to pin 5 and pin 6 of the breakout
+ - The raspberry Pi PWM HAT is soldered as indicated by adafruit 
+ - The tiller servo is plugged on the first PWM connector
+ - The sail line servo is connected on the 2nd PWM connector
+ - The GPS is connected on the USB plug
+ - The 3 color led is connected on pin 19-20-21 of the HAT breakout. Ground is connected to ground of this breakout.
+ - The BNO055 is soldered using adapters on the top of the breakout. 
+  - RST pin is connected on GPIO 19. 
+  - Serial pin are connected to the TX and RX pin of the breakout.
+  - GRND is connected to GRND
+  - 3.3V from the raspberry is connected to Vin and PS1 to enable serial interface on the BNO055
+ - Rotary encoder is connected to pin 5 and pin 6 of the breakout
 
 # Configuring the Pi
 
 A fresh raspbian installation is made on a 8 GB SD card.
+
 Using raspbian-config disable serial console and enable IC2, and reboot
  
