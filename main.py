@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-#   MAIN FUNCTION OF THE SAILING BOT. LICENCE GPL. CYRPAUT, 2016
+#   MAIN FUNCTION OF THE SAILING BOT. LICENCE GPL. CYRPAUT, 2018
 #
 
 from threading import Thread
