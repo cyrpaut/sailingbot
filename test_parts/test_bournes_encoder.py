@@ -1,10 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import RPi.GPIO as GPIO
 import smbus
 import time
-import pickle
-
 
 class Ace128:
 
@@ -15,10 +13,9 @@ class Ace128:
     else:
         _bus = smbus.SMBus(1)
 
-    def __init__(self, i2caddr, pinOrder=(8,7,6,5,4,3,2,1), saveFile=None):
+    def __init__(self, i2caddr, pinOrder=(8,7,6,5,4,3,2,1)):
         self._i2caddr = i2caddr
-        self.reverse = False
-        self.saveFile = saveFile
+
         Ace128._bus.write_byte(self._i2caddr, 255)  # set all pins up. pulldown for input
 
         # create encoder map on the fly - ported from make_encodermap.ino
@@ -42,21 +39,6 @@ class Ace128:
                     index |= 0b00000001 << pin  # set that pin's bit in the index byte
 
             self._map[index] = pos  # record the position in the map
-        if self.saveFile:
-            try:
-                with open(self.saveFile, 'rb') as handle:
-                    saveData = pickle.load(handle)
-                    self._mpos = saveData.get('mpos', 0)
-                    self._zero = saveData.get('zero', self.rawPos())
-                    self._lastpos = self.pos()
-            except:
-                self._mpos = 0
-                self._zero = self.rawPos()
-                self._lastpos = 0
-        else:
-            self._mpos = 0
-            self._zero = self.rawPos()
-            self._lastpos = 0
 
     def acePins(self):
         return Ace128._bus.read_byte(self._i2caddr)
@@ -64,56 +46,14 @@ class Ace128:
     def rawPos(self):
         return self._map[self.acePins()]
 
-    def _raw2pos(self, raw):
-        pos = raw - self._zero  # adjust for logical zero
-        if self.reverse:
-            pos *= -0b00000001  # reverse direction
-        if pos > 63:
-            pos -= 128
-        elif pos < -64:
-            pos += 128
-        return pos
-
-    def pos(self):
-        return self._raw2pos(self.rawPos())s
-
-    def setZero(self, rawPos):
-        self._zero = rawPos & 127
-        self.__saveData()
-
-    def getZero(self):
-        return self._zero
-
-    def setMpos(self, mPos):
-        rawpos = self.rawPos()
-        self.setZero(rawpos - (mPos & 127))  # mask to 7bit
-        self._lastpos = self._raw2pos(rawpos)
-        self._mpos = mPos - _lastpos & 0xFF80  # mask higher 9 bits
-        self.__saveData()
-
-    def __saveData(self):
-        if self.saveFile:
-            saveData = {'zero': self._zero, 'mpos': self._mpos}
-            try:
-                with open(self.saveFile, 'rb') as handle:
-                    oldData = pickle.load(handle)
-            except:
-                oldData = { }
-
-            if oldData != saveData:
-                with open(self.saveFile, 'w') as handle:
-                    pickle.dump(saveData, handle)
-
-
 if __name__ == "__main__":
     DEVICE = 0x3f  # Device address (A0-A2)
-    ace = Ace128(0x3f, saveFile="/tmp/ace.sav")
+    ace = Ace128(0x3f)
 
     print("Sailingbot test part - Bournes absolute position rotary encoder on adress 0x3f")
     print("Part can be ordered from tindies https://www.tindie.com/products/arielnh56/high-resolution-absolute-encoder-128-positions/")
-    print("Many thanks to Red Hunter for the part and the associated code"
-
+    print("Many thanks to Red Hunter for the part and the associated code")
     while True:
-        print(ace.rawPos(), ace.pos())
+        print("Weathercock is at " + str(ace.rawPos()*2.8125) + " degree")
         time.sleep(0.5)
 
