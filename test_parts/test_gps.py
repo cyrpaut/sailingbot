@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import serial
-import os
 
 firstFixFlag = False # this will go true after the first GPS fix.
 firstFixDate = ""
