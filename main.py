@@ -6,7 +6,7 @@
 
 import sys
 import time
-from globalDataStructures import SensorData
+from worker_threads.globalDataStructures import SensorData
 from worker_threads.Thread_BNO055 import BNO055Thread
 from worker_threads.Thread_Bournes import BournesEncoderThread
 from worker_threads.Thread_GPS import GpsThread
@@ -27,7 +27,6 @@ class SailingBot:
 
     def start(self):
         '''Start sensor & actuator threads'''
-
         print("Starting Threads:")
         print("Starting Bournes encoder thread...")
         encoder_thread = BournesEncoderThread(1, "Bournes Encoder Thread", self.data, self.parameters.bournes_i2c_address)

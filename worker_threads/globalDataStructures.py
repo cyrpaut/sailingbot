@@ -25,6 +25,10 @@ class SensorData:
         self.bournes_angle = 0.0
         self.bournes_turns = 0
 
+        # Windcock angle
+        self.mocoder_angle = 0
+        self.average_mocoder_angle = 0
+
         # Wifi Status
         self.wifi_signal = 0
         self.wifi_noise = 0
