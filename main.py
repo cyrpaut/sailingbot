@@ -11,53 +11,78 @@ from Thread_BNO055 import BNO055Thread
 from Thread_Bournes import BournesEncoderThread
 from Thread_GPS import GpsThread
 
+class parameters:
+    def __init__(self):
+        self.bournes_i2c_address = int()
+        self.BNO055_serial_adress = ""
+        self.gps_serial_adress = ""
 
-print("Welcome to the sailingbot")
-print("cyrpaut, 2016")
 
-# Load sensor data structure
-data = SensorData()
+class SailingBot:
+    '''Main Class executing threads for the control of the sailingbot'''
+    def __init__(self, _parameters):
+        # Load sensor self.data structure
+        self.data = SensorData()
+        self.parameters = _parameters
 
-#Data to migrate in the conf file
-bournes_i2c_address = 0x3f
-BNO055_serial_adress = '/dev/serial0'
-gps_serial_adress = '/dev/ttyUSB0'
+    def start(self):
+        '''Start sensor & actuator threads'''
 
-print("Starting Threads:")
+        print("Starting Threads:")
+        print("Starting Bournes encoder thread...")
+        encoder_thread = BournesEncoderThread(1, "Bournes Encoder Thread", self.data, self.parameters.bournes_i2c_address)
+        encoder_thread.daemon = True
+        encoder_thread.start()
 
-print("Starting Bournes encoder thread...")
-encoder_thread = BournesEncoderThread(1, "Bournes Encoder Thread", data, bournes_i2c_address)
-encoder_thread.daemon = True
-encoder_thread.start()
+        print("Starting BNO055 thread...")
+        bno055_thread = BNO055Thread(1, "BNO055 Thread", self.parameters.BNO055_serial_adress, self.data)
+        bno055_thread.daemon = True
+        bno055_thread.start()
 
-print("Starting BNO055 thread...")
-bno055_thread = BNO055Thread(1, "BNO055 Thread", BNO055_serial_adress, data)
-bno055_thread.daemon = True
-bno055_thread.start()
+        print("Starting GPS thread...")
+        gps_thread = GpsThread(1, "GPS Thread", self.parameters.gps_serial_adress, self.data)
+        gps_thread.daemon = True
+        gps_thread.start()
 
-print("Starting GPS thread...")
-gps_thread = GpsThread(1, "GPS Thread", '/dev/ttyUSB0', data)
-gps_thread.daemon = True
-gps_thread.start()
+    def run(self):
+        '''Console logging'''
+        while True:
+            try:
+                print("Longitude=", self.data.gps_long, \
+                      "Latitude=", self.data.gps_lat, \
+                      "Speed=", self.data.gps_speed, \
+                      "Time=", self.data.gps_time, \
+                      "Date=", self.data.gps_date,
+                      "Angle=", self.data.bournes_angle, \
+                      "Turns=", self.data.bournes_turns, \
+                      "Accel cal=", self.data.BNO055_accel_cal, \
+                      "Gyro Cal=", self.data.BNO055_gyro_cal, \
+                      "Mag cal=", self.data.BNO055_mag_cal, \
+                      "Sys cal=", self.data.BNO055_sys_cal, \
+                      "Pitch=", self.data.BNO055_pitch, \
+                      "Roll=", self.data.BNO055_roll, \
+                      "Heading=", self.data.BNO055_heading)
 
-while True:
-    try:
-        print("Longitude=", data.gps_long, \
-              "Latitude=", data.gps_lat, \
-              "Speed=", data.gps_speed, \
-              "Time=", data.gps_time, \
-              "Date=", data.gps_date,
-              "Angle=", data.bournes_angle, \
-              "Turns=", data.bournes_turns, \
-              "Accel cal=", data.BNO055_accel_cal, \
-              "Gyro Cal=", data.BNO055_gyro_cal, \
-              "Mag cal=", data.BNO055_mag_cal, \
-              "Sys cal=", data.BNO055_sys_cal, \
-              "Pitch=", data.BNO055_pitch, \
-              "Roll=", data.BNO055_roll, \
-              "Heading=", data.BNO055_heading)
-        time.sleep(1)
+            except KeyboardInterrupt:
+                print("You pressed ctrl+C")
+                sys.exit()
+                
+            time.sleep(1)
 
-    except KeyboardInterrupt:
-        print("You pressed ctrl+C")
-        sys.exit()
+
+if __name__ == "__main__":
+    print("Welcome to the sailingbot")
+    print("cyrpaut, 2016")
+
+    # Load parameters data structures
+    param = parameters()
+
+    # Data to migrate in the conf file
+    param.bournes_i2c_address = 0x3f
+    param.BNO055_serial_adress = '/dev/serial0'
+    param.gps_serial_adress = '/dev/ttyUSB0'
+
+    # Running main program
+    SB = SailingBot(param)
+    SB.start()
+    SB.run()
