@@ -19,7 +19,7 @@ class BournesEncoderThread (threading.Thread):
     else:
         _bus = smbus.SMBus(1)
 
-    def __init__(self, threadID, name, SensorData, i2caddr, pinOrder=(8,7,6,5,4,3,2,1)):
+    def __init__(self, threadID, name, i2caddr, SensorData, pinOrder=(8,7,6,5,4,3,2,1)):
         threading.Thread.__init__(self)
         self._i2caddr = i2caddr
         self.thread_ID = threadID
@@ -78,9 +78,9 @@ if __name__ == "__main__":
 
     data = SensorData()
 
-    DEVICE = 0x3f
+    encoder_i2c_address = 0x3f
 
-    thread = BournesEncoderThread(1, "Bournes Encoder Thread", data, DEVICE)
+    thread = BournesEncoderThread(1, "Bournes Encoder Thread", encoder_i2c_address, data)
     thread.daemon = True
     thread.start()
 

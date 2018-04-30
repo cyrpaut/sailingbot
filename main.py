@@ -31,7 +31,7 @@ class SailingBot:
         '''Start sensor & actuator threads'''
         print("Starting Threads:")
         print("Starting Bournes encoder thread...")
-        encoder_thread = BournesEncoderThread(1, "Bournes Encoder Thread", self.data, self.parameters.bournes_i2c_address)
+        encoder_thread = BournesEncoderThread(1, "Bournes Encoder Thread", self.parameters.bournes_i2c_address, self.data)
         encoder_thread.daemon = True
         encoder_thread.start()
 
