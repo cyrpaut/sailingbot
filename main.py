@@ -10,10 +10,12 @@ from worker_threads.globalDataStructures import SensorData
 from worker_threads.Thread_BNO055 import BNO055Thread
 from worker_threads.Thread_Bournes import BournesEncoderThread
 from worker_threads.Thread_GPS import GpsThread
+from worker_threads.Thread_mocoder import MocoderThread
 
 class parameters:
     def __init__(self):
         self.bournes_i2c_address = int()
+        self.mocoder_i2c_address = int()
         self.BNO055_serial_adress = ""
         self.gps_serial_adress = ""
 
@@ -33,13 +35,18 @@ class SailingBot:
         encoder_thread.daemon = True
         encoder_thread.start()
 
+        print("Sarting mocoder thread...")
+        mocoder_thread = MocoderThread(2, "Mocoder Thread", self.parameters.mocoder_i2c_address, self.data)
+        mocoder_thread.daemon = True
+        mocoder_thread.start()
+
         print("Starting BNO055 thread...")
-        bno055_thread = BNO055Thread(1, "BNO055 Thread", self.parameters.BNO055_serial_adress, self.data)
+        bno055_thread = BNO055Thread(3, "BNO055 Thread", self.parameters.BNO055_serial_adress, self.data)
         bno055_thread.daemon = True
         bno055_thread.start()
 
         print("Starting GPS thread...")
-        gps_thread = GpsThread(1, "GPS Thread", self.parameters.gps_serial_adress, self.data)
+        gps_thread = GpsThread(4, "GPS Thread", self.parameters.gps_serial_adress, self.data)
         gps_thread.daemon = True
         gps_thread.start()
 
@@ -60,7 +67,9 @@ class SailingBot:
                       "Sys cal=", self.data.BNO055_sys_cal, \
                       "Pitch=", self.data.BNO055_pitch, \
                       "Roll=", self.data.BNO055_roll, \
-                      "Heading=", self.data.BNO055_heading)
+                      "Heading=", self.data.BNO055_heading, \
+                      "Mocoder angle=", self.data.mocoder_angle, \
+                      "Mocoder ave angl=", self.data.average_mocoder_angle)
 
             except KeyboardInterrupt:
                 print("You pressed ctrl+C")
@@ -80,6 +89,7 @@ if __name__ == "__main__":
     param.bournes_i2c_address = 0x3f
     param.BNO055_serial_adress = '/dev/serial0'
     param.gps_serial_adress = '/dev/ttyUSB0'
+    param.mocoder_i2c_address = 0x36
 
     # Running main program
     SB = SailingBot(param)
