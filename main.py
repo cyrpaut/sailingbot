@@ -7,9 +7,9 @@
 import sys
 import time
 from globalDataStructures import SensorData
-from Thread_BNO055 import BNO055Thread
-from Thread_Bournes import BournesEncoderThread
-from Thread_GPS import GpsThread
+from worker_threads.Thread_BNO055 import BNO055Thread
+from worker_threads.Thread_Bournes import BournesEncoderThread
+from worker_threads.Thread_GPS import GpsThread
 
 class parameters:
     def __init__(self):
