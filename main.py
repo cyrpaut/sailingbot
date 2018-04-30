@@ -14,6 +14,7 @@ from worker_threads.Thread_mocoder import MocoderThread
 from worker_threads.Thread_Wifi_Quality import WifiThread
 from worker_threads.Thread_Button import ButtonThread
 from worker_threads.Thread_Status_LED import StatusLedThread
+from worker_threads.Thread_Mast_LED import MastLedThread
 
 class parameters:
     def __init__(self):
@@ -25,6 +26,7 @@ class parameters:
         self.led_pin_1 = 0
         self.led_pin_2 = 0
         self.led_pin_3 = 0
+        self.mast_led_pin = 0
 
 
 class SailingBot:
@@ -77,6 +79,11 @@ class SailingBot:
         button_thread.daemon = True
         button_thread.start()
 
+        print("Starting Wifi monitoring mast led thread")
+        mast_led_thread = MastLedThread(6, "Wifi LED Thread", self.parameters.mast_led_pin, self.data)
+        mast_led_thread.daemon = True
+        mast_led_thread.start()
+
         # Set the flag to OK
         self.data.thread_ready = True
 
@@ -125,6 +132,7 @@ if __name__ == "__main__":
     param.led_pin_1 = 19
     param.led_pin_2 = 20
     param.led_pin_3 = 21
+    param.mast_led_pin = 22
 
     # Running main program
     SB = SailingBot(param)

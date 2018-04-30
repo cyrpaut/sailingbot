@@ -40,6 +40,8 @@ class SensorData:
         # Thread status
         self.thread_ready = False
 
+        # Connection to PC over wifi socket
+        self.is_connected = False
 
 class ActuatorParameters:
     '''This class contains variable which are target for PID'''
