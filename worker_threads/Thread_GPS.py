@@ -99,7 +99,8 @@ if __name__ == "__main__":
                   "Latitude=", data.gps_lat, \
                   "Speed=", data.gps_speed, \
                   "Time=", data.gps_time, \
-                  "Date=", data.gps_date)
+                  "Date=", data.gps_date, \
+                  "Validity=", data.gps_validity)
             time.sleep(1)
         except KeyboardInterrupt:
             print("You pressed ctrl+C")

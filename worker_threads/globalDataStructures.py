@@ -37,6 +37,9 @@ class SensorData:
         # Button status
         self.button_activate = False
 
+        # Thread status
+        self.thread_ready = False
+
 
 class ActuatorParameters:
     '''This class contains variable which are target for PID'''

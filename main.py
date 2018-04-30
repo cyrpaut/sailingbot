@@ -13,6 +13,7 @@ from worker_threads.Thread_GPS import GpsThread
 from worker_threads.Thread_mocoder import MocoderThread
 from worker_threads.Thread_Wifi_Quality import WifiThread
 from worker_threads.Thread_Button import ButtonThread
+from worker_threads.Thread_Status_LED import StatusLedThread
 
 class parameters:
     def __init__(self):
@@ -21,6 +22,9 @@ class parameters:
         self.BNO055_serial_adress = ""
         self.gps_serial_adress = ""
         self.button_pin = 0
+        self.led_pin_1 = 0
+        self.led_pin_2 = 0
+        self.led_pin_3 = 0
 
 
 class SailingBot:
@@ -30,9 +34,19 @@ class SailingBot:
         self.data = SensorData()
         self.parameters = _parameters
 
+        # Thread initialization flag
+        self.data.thread_ready = False
+
     def start(self):
         '''Start sensor & actuator threads'''
         print("Starting Threads:")
+
+        print("Starting 3 color monitor led thread")
+        led_monitor_thread = StatusLedThread(0, "Status led monitor", self.parameters.led_pin_1, \
+                                             self.parameters.led_pin_2, self.parameters.led_pin_3, self.data)
+        led_monitor_thread.daemon = True
+        led_monitor_thread.start()
+
         print("Starting Bournes encoder thread...")
         encoder_thread = BournesEncoderThread(1, "Bournes Encoder Thread", self.parameters.bournes_i2c_address, self.data)
         encoder_thread.daemon = True
@@ -63,6 +77,8 @@ class SailingBot:
         button_thread.daemon = True
         button_thread.start()
 
+        # Set the flag to OK
+        self.data.thread_ready = True
 
     def run(self):
         '''Console logging'''
@@ -106,6 +122,9 @@ if __name__ == "__main__":
     param.gps_serial_adress = '/dev/ttyUSB0'
     param.mocoder_i2c_address = 0x36
     param.button_pin = 16
+    param.led_pin_1 = 19
+    param.led_pin_2 = 20
+    param.led_pin_3 = 21
 
     # Running main program
     SB = SailingBot(param)
