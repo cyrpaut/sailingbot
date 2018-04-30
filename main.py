@@ -12,6 +12,7 @@ from worker_threads.Thread_Bournes import BournesEncoderThread
 from worker_threads.Thread_GPS import GpsThread
 from worker_threads.Thread_mocoder import MocoderThread
 from worker_threads.Thread_Wifi_Quality import WifiThread
+from worker_threads.Thread_Button import ButtonThread
 
 class parameters:
     def __init__(self):
@@ -19,6 +20,7 @@ class parameters:
         self.mocoder_i2c_address = int()
         self.BNO055_serial_adress = ""
         self.gps_serial_adress = ""
+        self.button_pin = 0
 
 
 class SailingBot:
@@ -56,6 +58,12 @@ class SailingBot:
         gps_thread.daemon = True
         gps_thread.start()
 
+        print("Starting Logger Button thread...")
+        button_thread = ButtonThread(5, "GPS Thread", self.parameters.button_pin, self.data)
+        button_thread.daemon = True
+        button_thread.start()
+
+
     def run(self):
         '''Console logging'''
         while True:
@@ -75,7 +83,8 @@ class SailingBot:
                       "Roll=", self.data.BNO055_roll, \
                       "Heading=", self.data.BNO055_heading, \
                       "Mocoder angle=", self.data.mocoder_angle, \
-                      "Mocoder ave angl=", self.data.average_mocoder_angle)
+                      "Mocoder ave angl=", self.data.average_mocoder_angle, \
+                      "Logger button=", self.data.button_activate)
 
             except KeyboardInterrupt:
                 print("You pressed ctrl+C")
@@ -96,6 +105,7 @@ if __name__ == "__main__":
     param.BNO055_serial_adress = '/dev/serial0'
     param.gps_serial_adress = '/dev/ttyUSB0'
     param.mocoder_i2c_address = 0x36
+    param.button_pin = 16
 
     # Running main program
     SB = SailingBot(param)
