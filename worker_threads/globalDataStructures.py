@@ -30,7 +30,8 @@ class SensorData:
         self.average_mocoder_angle = 0
 
         # Wifi Status
-        self.wifi_signal = 0
+        self.wifi_link = 0
+        self.wifi_level = 0
         self.wifi_noise = 0
 
         # Button status

@@ -11,6 +11,7 @@ from worker_threads.Thread_BNO055 import BNO055Thread
 from worker_threads.Thread_Bournes import BournesEncoderThread
 from worker_threads.Thread_GPS import GpsThread
 from worker_threads.Thread_mocoder import MocoderThread
+from worker_threads.Thread_Wifi_Quality import WifiThread
 
 class parameters:
     def __init__(self):
@@ -40,13 +41,18 @@ class SailingBot:
         mocoder_thread.daemon = True
         mocoder_thread.start()
 
+        print("Starting Wifi Quality Control thread...")
+        wifi_thread = WifiThread(3, "Wifi Thread", self.data)
+        wifi_thread.daemon = True
+        wifi_thread.start()
+
         print("Starting BNO055 thread...")
-        bno055_thread = BNO055Thread(3, "BNO055 Thread", self.parameters.BNO055_serial_adress, self.data)
+        bno055_thread = BNO055Thread(4, "BNO055 Thread", self.parameters.BNO055_serial_adress, self.data)
         bno055_thread.daemon = True
         bno055_thread.start()
 
         print("Starting GPS thread...")
-        gps_thread = GpsThread(4, "GPS Thread", self.parameters.gps_serial_adress, self.data)
+        gps_thread = GpsThread(5, "GPS Thread", self.parameters.gps_serial_adress, self.data)
         gps_thread.daemon = True
         gps_thread.start()
 
