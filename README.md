@@ -44,17 +44,36 @@ The hardware of the boast is composed of:
 
 ## Configure raspbian
 
-Install a fresh Raspbian Stretch Lite on a 16 or 32 GB SD card. Look at this [tutorial](https://www.howtoforge.com/tutorial/howto-install-raspbian-on-raspberry-pi/) if your don't know how to proceed. Don't forget to change the default password and upgrade all packages qith `sudo apt-get update` and `sudo apt-get uprade`.
+Install a fresh Raspbian Stretch Lite on a 16 or 32 GB SD card. Look at this [tutorial](https://www.howtoforge.com/tutorial/howto-install-raspbian-on-raspberry-pi/) if your don't know how to proceed. 
 
-Use `raspi-config` to enable SSH tunnel (Interfacing options > SSH), and connect your pi to your wifi (Network options > Wifi)
+Activate the SSH tunnel by mounting the sdcard and `touch ssh` or using the mouse and keyboard and the `raspi-config` tool (Interfacing options > SSH). See [this tutorial](https://www.raspberrypistarterkits.com/how-to/enable-ssh-raspberry-pi/) for more details on how to enable ssh.
 
-Still in `raspi-config` disable serial console ("5 Interfacing Options" > "P6 Serial" | <No> and then <Yes>) and enable IC2 ("5 Interfacing Options" > "P5 I2C") , and reboot.
-
-Finally connect to you pi through ssh
-
+Connect the ethernet cable, [search for the IP address](https://raspberrypi.stackexchange.com/a/13937) of the Pi on your network, and you can now connect to your pi using the appropriate ssh command:
 ```bash
 $ ssh pi@my-IP-adress
 ```
+
+At your first login, don't forget to change the default password and upgrade all packages with `sudo apt-get update` and `sudo apt-get upgrade`.
+
+## Enable I2C and Serial support for parts
+
+Still in `raspi-config` disable serial console ("5 Interfacing Options" > "P6 Serial" | <No> and then <Yes>) and enable IC2 ("5 Interfacing Options" > "P5 I2C") , and reboot.
+
+## Set-up the wifi of the Pi as a wifi access point
+
+After searching around and trying without success different tutorial that turned not to work with Raspbian Stretch, I have found [this solution](https://raspberrypi.stackexchange.com/a/79008) that is simple and work great!
+
+Simply type in
+```bash
+curl -sSL https://gist.github.com/Lewiscowles1986/fecd4de0b45b2029c390/raw/0c8b3af3530a35db9ab958defe9629cb5ea99972/rPi3-ap-setup.sh | sudo bash $0 <your-password> SailingBot-AP
+sudo wget -q https://gist.githubusercontent.com/Lewiscowles1986/390d4d423a08c4663c0ada0adfe04cdb/raw/5b41bc95d1d483b48e119db64e0603eefaec57ff/dhcpcd.sh -O /usr/lib/dhcpcd5/dhcpcd
+sudo chmod +x /usr/lib/dhcpcd5/dhcpcd
+sudo reboot
+```
+
+where `<your-password>` is going to be your wifi access point. Thanks to Lewiscowles1986 for this elegant, simple and efficient solution.
+
+Then use your laptop wifi to connect to SailingBot-AP. Your Pi IP address should be 10.0.0.1 and you can connect to it over wifi through `ssh pi@10.0.0.1`. After all cloning steps are done, you can just unplug the ethernet cable. 
 
 ## Install the main program and dependencies
 
